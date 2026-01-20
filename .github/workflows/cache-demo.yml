@@ -1,0 +1,32 @@
+name: Cache Demo
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache example
+        uses: actions/cache@v4
+        with:
+          path: cache-data
+          key: my-cache-${{ github.run_id }}
+
+      - name: Create cache data
+        run: |
+          mkdir -p cache-data
+          echo "Cached at: $(date)" > cache-data/timestamp.txt
+          echo "Run ID: ${{ github.run_id }}" >> cache-data/timestamp.txt
+          echo "Commit: ${{ github.sha }}" >> cache-data/timestamp.txt
+
+      - name: Show cache
+        run: |
+          echo "Cache contents:"
+          cat cache-data/timestamp.txt
